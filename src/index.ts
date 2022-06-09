@@ -13,7 +13,8 @@ export interface Options {
 }
 
 export type PromiseFunction<T> = (...args: any[]) => Promise<T>
-export type UsePromise<R = false> = <T, U = Error>(p: PromiseFunction<T>, options?: Options, ...args: any[]) => UsePromiseReturn<T, U, R>
+export type UsePromiseOptions<R = false> = R extends true ? Omit<Options, 'immediate'> : Options
+export type UsePromise<R = false> = <T, U = Error>(p: PromiseFunction<T>, options?: UsePromiseOptions<R>, ...args: any[]) => UsePromiseReturn<T, U, R>
 export type UsePromiseReturn<T, U = Error, R = false> = R extends true ? Promise<PromiseReturn<T, U>> : PromiseReturn<T, U>
 
 /**
