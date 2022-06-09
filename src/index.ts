@@ -1,7 +1,7 @@
 import type { Ref } from 'vue-demi'
 import { ref } from 'vue-demi'
 
-export interface AwaitPromiseReturn<T, U = Error> {
+export interface PromiseReturn<T, U = Error> {
   data: Ref<T>
   loading: Ref<boolean>
   promise: () => Promise<T>
@@ -12,7 +12,14 @@ export interface Options {
   immediate?: boolean
 }
 
-export function usePromise<T, U = Error>(p: (...args: any[]) => Promise<T>, options?: Options, ...args: any[]): AwaitPromiseReturn<T, U> {
+/**
+ *
+ * @param p function return promise
+ * @param options
+ * @param args pass to `p` arguments
+ * @returns return `PromiseReturn`
+ */
+export function usePromise<T, U = Error>(p: (...args: any[]) => Promise<T>, options?: Options, ...args: any[]): PromiseReturn<T, U> {
   const loading = ref(false)
   const data = ref()
   const error = ref()
@@ -42,12 +49,19 @@ export function usePromise<T, U = Error>(p: (...args: any[]) => Promise<T>, opti
   }
 }
 
-export function useAwaitPromise<T, U = Error>(p: (...args: any[]) => Promise<T>, options?: Options, ...args: any[]): Promise<AwaitPromiseReturn<T, U>> {
+/**
+ *
+ * @param p function return promise
+ * @param options
+ * @param args pass to `p` arguments
+ * @returns return promise with `PromiseReturn`
+ */
+export function useAwaitPromise<T, U = Error>(p: (...args: any[]) => Promise<T>, options?: Options, ...args: any[]): Promise<PromiseReturn<T, U>> {
   const { promise, loading, data, error } = usePromise(p, {
     ...options,
     immediate: false,
   }, args)
-  return promise().then<AwaitPromiseReturn<T, U>>((): any => {
+  return promise().then<PromiseReturn<T, U>>((): any => {
     return {
       promise,
       loading,
